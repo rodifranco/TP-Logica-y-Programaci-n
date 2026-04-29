@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Institucional</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="background-container">
+    <div class="background-image" id="backgroundImage"></div>
+  </div>
+
+  <!-- Pantalla de bienvenida -->
+  <div class="overlay" id="overlay">
+    <div class="overlay-content">
+      <div class="overlay-logo">&#9632;</div>
+      <h1>SISTEMA INSTITUCIONAL</h1>
+      <h2>BIENVENIDO</h2>
+      <p class="overlay-hint">Hacé click para continuar</p>
+    </div>
+  </div>
+
+  <!-- Formularios login / registro -->
+  <div class="main-container hidden" id="mainContainer">
+
+    <div class="login-box" id="login">
+      <div class="form-header">
+        <div class="form-logo">&#9632;</div>
+        <h2>Iniciar Sesión</h2>
+      </div>
+
+      <div class="alert alert-error hidden" id="loginAlert">
+        <span class="alert-icon">&#9888;</span>
+        <span id="loginAlertMsg">Usuario o contraseña incorrectos.</span>
+      </div>
+      <div class="alert alert-warning hidden" id="lockAlert">
+        <span class="alert-icon">&#128274;</span>
+        <span>Demasiados intentos fallidos. Intentá de nuevo en <strong id="lockTimer">30</strong>s.</span>
+      </div>
+
+      <form id="formLogin" novalidate>
+        <div class="field-group" id="fieldLoginUser">
+          <label for="loginUser">Usuario</label>
+          <input type="text" id="loginUser" placeholder="Ingresá tu usuario" autocomplete="username">
+          <span class="field-msg" id="msgLoginUser"></span>
+        </div>
+        <div class="field-group" id="fieldLoginPass">
+          <label for="loginPass">Contraseña</label>
+          <div class="pass-wrapper">
+            <input type="password" id="loginPass" placeholder="Ingresá tu contraseña" autocomplete="current-password">
+            <button type="button" class="btn-eye" id="toggleLoginPass" aria-label="Mostrar contraseña">&#128065;</button>
+          </div>
+          <span class="field-msg" id="msgLoginPass"></span>
+        </div>
+        <button type="submit" class="btn ingresar" id="btnLogin">
+          <span class="btn-text">Ingresar</span>
+          <span class="btn-spinner hidden" id="loginSpinner"></span>
+        </button>
+        <button type="button" class="btn registrar" id="irARegistro">Registrarse</button>
+        <div class="divider-line"><span>o</span></div>
+        <button type="button" class="btn btn-campus" id="btnCampusLogin">&#127979; Acceder al Campus Virtual</button>
+        <a href="#" class="olvide" id="linkOlvide">&#128273; ¿Olvidé mi usuario o contraseña?</a>
+      </form>
+    </div>
+
+    <div class="registro-box hidden" id="registro">
+      <div class="form-header">
+        <div class="form-logo">&#9632;</div>
+        <h2>Registrarse</h2>
+      </div>
+      <p class="registro-subtitle">Crear nuevo Administrador</p>
+
+      <div class="alert alert-success hidden" id="registroAlert">
+        <span class="alert-icon">&#10003;</span>
+        <span>Administrador registrado. Redirigiendo al login...</span>
+      </div>
+
+      <form id="formRegistro" novalidate>
+        <div class="field-group" id="fieldNewUser">
+          <label for="newUser">Usuario</label>
+          <input type="text" id="newUser" placeholder="Elegí un nombre de usuario" autocomplete="off">
+          <span class="field-msg" id="msgNewUser"></span>
+        </div>
+        <div class="field-group" id="fieldNewPass">
+          <label for="newPass">Contraseña</label>
+          <div class="pass-wrapper">
+            <input type="password" id="newPass" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+            <button type="button" class="btn-eye" id="toggleNewPass" aria-label="Mostrar contraseña">&#128065;</button>
+          </div>
+          <div class="pass-strength hidden" id="passStrength">
+            <div class="pass-strength-bar"><div id="passStrengthFill"></div></div>
+            <span id="passStrengthLabel"></span>
+          </div>
+          <span class="field-msg" id="msgNewPass"></span>
+        </div>
+        <div class="field-group" id="fieldConfirmPass">
+          <label for="confirmPass">Confirmar contraseña</label>
+          <div class="pass-wrapper">
+            <input type="password" id="confirmPass" placeholder="Repetí la contraseña" autocomplete="new-password">
+            <button type="button" class="btn-eye" id="toggleConfirmPass" aria-label="Mostrar contraseña">&#128065;</button>
+          </div>
+          <span class="field-msg" id="msgConfirmPass"></span>
+        </div>
+        <button type="submit" class="btn registrar">Crear cuenta</button>
+        <button type="button" id="volverLogin" class="btn-secondary">&#8592; Volver al login</button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Panel de administración -->
+  <div class="admin-panel hidden" id="adminPanel">
+
+    <div class="admin-header">
+      <div class="admin-header-left">
+        <span class="admin-logo">&#9632;</span>
+        <div>
+          <h1>PANEL DE CONTROL</h1>
+          <h2>Bienvenido, <span id="adminUsername">Administrador</span></h2>
+        </div>
+      </div>
+      <div class="admin-header-right">
+        <span class="session-badge">&#11044; Sesión activa</span>
+        <span class="session-timer" id="sessionTimer"></span>
+        <button id="logout" class="btn-logout">Cerrar sesión</button>
+      </div>
+    </div>
+
+    <div class="admin-body">
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">&#128101;</div>
+          <div class="stat-info">
+            <div class="stat-number" id="statAdmins">1</div>
+            <div class="stat-label">Administradores</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">&#128197;</div>
+          <div class="stat-info">
+            <div class="stat-number" id="statSessions">0</div>
+            <div class="stat-label">Sesiones hoy</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">&#128336;</div>
+          <div class="stat-info">
+            <div class="stat-number" id="statLastLogin">--</div>
+            <div class="stat-label">Último acceso</div>
+          </div>
+        </div>
+        <div class="stat-card stat-ok">
+          <div class="stat-icon">&#10003;</div>
+          <div class="stat-info">
+            <div class="stat-number">OK</div>
+            <div class="stat-label">Estado del sistema</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3 class="section-title">Accesos rápidos</h3>
+        <div class="quick-actions">
+          <button class="action-card" onclick="showAdminMsg('Gestión de usuarios (próximamente)')">
+            <span class="action-icon">&#128101;</span>
+            <span>Gestionar usuarios</span>
+          </button>
+          <button class="action-card" onclick="showAdminMsg('Configuración (próximamente)')">
+            <span class="action-icon">&#9881;</span>
+            <span>Configuración</span>
+          </button>
+          <button class="action-card" onclick="showAdminMsg('Reportes (próximamente)')">
+            <span class="action-icon">&#128202;</span>
+            <span>Reportes</span>
+          </button>
+          <button class="action-card" onclick="showAdminMsg('Seguridad (próximamente)')">
+            <span class="action-icon">&#128274;</span>
+            <span>Seguridad</span>
+          </button>
+        </div>
+        <div class="alert alert-info hidden" id="adminActionMsg"></div>
+      </div>
+
+      <div class="admin-section">
+        <h3 class="section-title">Actividad reciente</h3>
+        <div class="activity-log" id="activityLog"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal recuperar contraseña -->
+  <div class="modal-overlay hidden" id="modalOlvide">
+    <div class="modal">
+      <h3>Recuperar acceso</h3>
+      <p>Esta función requiere contactar al administrador de sistema o al área de soporte técnico.</p>
+      <button class="btn ingresar" id="cerrarModal">Entendido</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

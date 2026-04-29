@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Control — Sistema Institucional</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body, html { height: 100%; overflow: auto; }
+    .panel-standalone {
+      min-height: 100vh;
+      background-image: url('image_0.png');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Tabs del panel ── */
+    .panel-tabs {
+      display: flex;
+      gap: 0;
+      background: rgba(255,255,255,0.6);
+      border-bottom: 2px solid rgba(52,73,94,0.15);
+      padding: 0 40px;
+      flex-wrap: wrap;
+    }
+    .panel-tab {
+      padding: 12px 22px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #666;
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .panel-tab:hover { color: #2c3e50; }
+    .panel-tab.active { color: #1a6a3e; border-bottom-color: #1a6a3e; }
+
+    /* ── Tab content ── */
+    .tab-section { display: none; }
+    .tab-section.active { display: flex; flex-direction: column; gap: 28px; }
+
+    /* ── Editor campus ── */
+    .campus-editor {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .editor-card {
+      background: rgba(255,255,255,0.93);
+      border-radius: 6px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .editor-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: rgba(44,62,80,0.06);
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .editor-card-title {
+      font-size: 0.72rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .editor-card-title .icon { font-size: 1rem; }
+
+    .btn-add {
+      background: #1a6a3e;
+      color: white;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 3px;
+      font-size: 0.72rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-add:hover { background: #155732; }
+
+    .editor-card-body { padding: 16px 20px; }
+
+    /* ── Tabla de materias ── */
+    .editor-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+    }
+    .editor-table th {
+      text-align: left;
+      font-size: 0.68rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #888;
+      padding: 0 10px 10px;
+      font-weight: 700;
+      border-bottom: 1px solid #eee;
+    }
+    .editor-table td {
+      padding: 11px 10px;
+      border-bottom: 1px solid #f5f5f5;
+      color: #444;
+      vertical-align: middle;
+    }
+    .editor-table tr:last-child td { border-bottom: none; }
+    .editor-table tr:hover td { background: #fafafa; }
+
+    .color-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .materia-nombre-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .progress-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mini-progress {
+      width: 60px;
+      height: 4px;
+      background: #eee;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .mini-progress-fill {
+      height: 100%;
+      border-radius: 2px;
+    }
+
+    .btn-edit {
+      background: none;
+      border: 1.5px solid #ccc;
+      color: #555;
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: all 0.2s;
+      margin-right: 4px;
+    }
+    .btn-edit:hover { border-color: #2980b9; color: #2980b9; }
+
+    .btn-del {
+      background: none;
+      border: 1.5px solid #ccc;
+      color: #bbb;
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-del:hover { border-color: #e74c3c; color: #e74c3c; background: #fff5f5; }
+
+    /* ── Lista novedades ── */
+    .novedad-editor-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .novedad-editor-item:last-child { border-bottom: none; }
+
+    .novedad-dot-edit {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+
+    .novedad-editor-info { flex: 1; }
+    .novedad-editor-titulo { font-size: 0.85rem; font-weight: 600; color: #333; }
+    .novedad-editor-desc { font-size: 0.75rem; color: #888; margin-top: 2px; }
+    .novedad-editor-fecha { font-size: 0.72rem; color: #bbb; min-width: 50px; text-align: right; }
+
+    /* ── Agenda ── */
+    .agenda-editor-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .agenda-editor-item:last-child { border-bottom: none; }
+
+    .agenda-dia-badge {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #1a6a3e;
+      min-width: 36px;
+      text-align: center;
+      line-height: 1;
+    }
+    .agenda-mes-badge { font-size: 0.65rem; text-transform: uppercase; color: #aaa; text-align: center; }
+
+    .agenda-editor-info { flex: 1; }
+    .agenda-editor-titulo { font-size: 0.85rem; font-weight: 600; color: #333; }
+    .agenda-editor-hora { font-size: 0.75rem; color: #888; }
+
+    /* ── Hero editor ── */
+    .hero-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .hero-fields-full { grid-column: 1 / -1; }
+
+    .editor-field label {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 5px;
+    }
+    .editor-field input,
+    .editor-field textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 3px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      color: #333;
+      background: #fafafa;
+      transition: border-color 0.2s;
+      resize: vertical;
+    }
+    .editor-field input:focus,
+    .editor-field textarea:focus {
+      outline: none;
+      border-color: #1a6a3e;
+      background: #fff;
+    }
+
+    .stat-inputs {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .stat-input-group { flex: 1; min-width: 100px; }
+
+    .btn-save-section {
+      background: #2c3e50;
+      color: white;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 14px;
+    }
+    .btn-save-section:hover { background: #1a252f; }
+
+    .save-badge {
+      display: inline-block;
+      background: #eafaf1;
+      color: #1e7e3e;
+      border: 1px solid #a9dfbf;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      margin-left: 10px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .save-badge.show { opacity: 1; }
+
+    /* ── Accesos rápidos editor ── */
+    .shortcuts-editor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    .shortcut-editor-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f8f9fa;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 4px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+    }
+    .shortcut-editor-item .shortcut-icon-preview { font-size: 1.3rem; }
+    .shortcut-editor-item span { flex: 1; font-weight: 600; color: #444; }
+
+    /* ── Modal ── */
+    .editor-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+    }
+    .editor-modal {
+      background: white;
+      border-radius: 6px;
+      width: 90%;
+      max-width: 480px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      animation: modalIn 0.2s ease;
+    }
+    @keyframes modalIn {
+      from { opacity:0; transform: translateY(-16px) scale(0.97); }
+      to   { opacity:1; transform: translateY(0) scale(1); }
+    }
+    .editor-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 22px;
+      border-bottom: 1px solid #eee;
+    }
+    .editor-modal-header h4 {
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #333;
+      font-weight: bold;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #aaa;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: #e74c3c; }
+    .editor-modal-body {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .editor-modal-footer {
+      padding: 14px 22px;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .btn-modal-cancel {
+      background: none;
+      border: 1.5px solid #ccc;
+      color: #666;
+      padding: 8px 18px;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-modal-cancel:hover { border-color: #aaa; color: #333; }
+    .btn-modal-save {
+      background: #1a6a3e;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-modal-save:hover { background: #155732; }
+
+    .editor-field select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 3px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      color: #333;
+      background: #fafafa;
+      transition: border-color 0.2s;
+      cursor: pointer;
+    }
+    .editor-field select:focus {
+      outline: none;
+      border-color: #1a6a3e;
+    }
+
+    .color-preview-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .color-preview-row input[type="color"] {
+      width: 44px;
+      height: 36px;
+      padding: 2px;
+      border: 1.5px solid #ddd;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .color-preview-row input[type="text"] {
+      flex: 1;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #bbb;
+      font-size: 0.82rem;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="panel-standalone">
+    <div class="admin-panel" id="adminPanel" style="position:relative; inset:auto; min-height:100vh;">
+
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <span class="admin-logo">&#9632;</span>
+          <div>
+            <h1>PANEL DE CONTROL</h1>
+            <h2>Bienvenido, <span id="adminUsername">Administrador</span></h2>
+          </div>
+        </div>
+        <div class="admin-header-right">
+          <span class="session-badge">&#11044; Sesión activa</span>
+          <span class="session-timer" id="sessionTimer"></span>
+          <a href="campus.html" class="btn-logout" style="text-decoration:none; display:inline-block; padding:8px 18px;">&#8592; Volver al Campus</a>
+          <button id="logout" class="btn-logout">Cerrar sesión</button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="panel-tabs">
+        <button class="panel-tab active" data-tab="general">&#9881; General</button>
+        <button class="panel-tab" data-tab="campus">&#127979; Campus Virtual</button>
+      </div>
+
+      <div class="admin-body">
+
+        <!-- TAB: General -->
+        <div class="tab-section active" id="tab-general">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">&#128101;</div>
+              <div class="stat-info">
+                <div class="stat-number" id="statAdmins">1</div>
+                <div class="stat-label">Administradores</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">&#128197;</div>
+              <div class="stat-info">
+                <div class="stat-number" id="statSessions">0</div>
+                <div class="stat-label">Sesiones hoy</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">&#128336;</div>
+              <div class="stat-info">
+                <div class="stat-number" id="statLastLogin">--</div>
+                <div class="stat-label">Último acceso</div>
+              </div>
+            </div>
+            <div class="stat-card stat-ok">
+              <div class="stat-icon">&#10003;</div>
+              <div class="stat-info">
+                <div class="stat-number">OK</div>
+                <div class="stat-label">Estado del sistema</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-section">
+            <h3 class="section-title">Accesos rápidos</h3>
+            <div class="quick-actions">
+              <button class="action-card" onclick="showAdminMsg('Gestión de usuarios (próximamente)')">
+                <span class="action-icon">&#128101;</span><span>Gestionar usuarios</span>
+              </button>
+              <button class="action-card" onclick="showAdminMsg('Configuración (próximamente)')">
+                <span class="action-icon">&#9881;</span><span>Configuración</span>
+              </button>
+              <button class="action-card" onclick="showAdminMsg('Reportes (próximamente)')">
+                <span class="action-icon">&#128202;</span><span>Reportes</span>
+              </button>
+              <button class="action-card" onclick="showAdminMsg('Seguridad (próximamente)')">
+                <span class="action-icon">&#128274;</span><span>Seguridad</span>
+              </button>
+            </div>
+            <div class="alert alert-info hidden" id="adminActionMsg"></div>
+          </div>
+
+          <div class="admin-section">
+            <h3 class="section-title">Actividad reciente</h3>
+            <div class="activity-log" id="activityLog"></div>
+          </div>
+        </div>
+
+        <!-- TAB: Campus Virtual -->
+        <div class="tab-section" id="tab-campus">
+
+          <!-- Hero del campus -->
+          <div class="editor-card">
+            <div class="editor-card-header">
+              <div class="editor-card-title"><span class="icon">🎓</span> Banner principal (Hero)</div>
+              <span class="save-badge" id="badgeHero">✓ Guardado</span>
+            </div>
+            <div class="editor-card-body">
+              <div class="hero-fields">
+                <div class="editor-field hero-fields-full">
+                  <label>Título principal</label>
+                  <input type="text" id="heroTitulo" value="Tu espacio de aprendizaje institucional">
+                </div>
+                <div class="editor-field hero-fields-full">
+                  <label>Subtítulo / descripción</label>
+                  <textarea id="heroDesc" rows="2">Accedé a tus materias, actividades y novedades desde un solo lugar. Tu progreso académico actualizado.</textarea>
+                </div>
+                <div class="editor-field">
+                  <label>Etiqueta del tag</label>
+                  <input type="text" id="heroTag" value="🏫 Campus Virtual · Ciclo 2025">
+                </div>
+              </div>
+              <div style="margin-top:16px;">
+                <div style="font-size:0.68rem;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:8px;">Estadísticas del hero</div>
+                <div class="stat-inputs">
+                  <div class="stat-input-group editor-field">
+                    <label>Número 1</label>
+                    <input type="text" id="heroStat1Num" value="6" style="text-align:center;">
+                  </div>
+                  <div class="stat-input-group editor-field">
+                    <label>Etiqueta 1</label>
+                    <input type="text" id="heroStat1Lbl" value="Materias activas">
+                  </div>
+                  <div class="stat-input-group editor-field">
+                    <label>Número 2</label>
+                    <input type="text" id="heroStat2Num" value="3" style="text-align:center;">
+                  </div>
+                  <div class="stat-input-group editor-field">
+                    <label>Etiqueta 2</label>
+                    <input type="text" id="heroStat2Lbl" value="Entregas pendientes">
+                  </div>
+                  <div class="stat-input-group editor-field">
+                    <label>Número 3</label>
+                    <input type="text" id="heroStat3Num" value="2" style="text-align:center;">
+                  </div>
+                  <div class="stat-input-group editor-field">
+                    <label>Etiqueta 3</label>
+                    <input type="text" id="heroStat3Lbl" value="Novedades nuevas">
+                  </div>
+                </div>
+              </div>
+              <button class="btn-save-section" onclick="guardarHero()">Guardar cambios del banner</button>
+            </div>
+          </div>
+
+          <!-- Materias -->
+          <div class="editor-card">
+            <div class="editor-card-header">
+              <div class="editor-card-title"><span class="icon">📚</span> Materias</div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span class="save-badge" id="badgeMaterias">✓ Guardado</span>
+                <button class="btn-add" onclick="abrirModalMateria(null)">+ Nueva materia</button>
+              </div>
+            </div>
+            <div class="editor-card-body">
+              <table class="editor-table">
+                <thead>
+                  <tr>
+                    <th>Materia</th>
+                    <th>Código</th>
+                    <th>Docente</th>
+                    <th>Progreso</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="materiasTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Novedades -->
+          <div class="editor-card">
+            <div class="editor-card-header">
+              <div class="editor-card-title"><span class="icon">🔔</span> Novedades</div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span class="save-badge" id="badgeNovedades">✓ Guardado</span>
+                <button class="btn-add" onclick="abrirModalNovedad(null)">+ Nueva novedad</button>
+              </div>
+            </div>
+            <div class="editor-card-body">
+              <div id="novedadesList"></div>
+            </div>
+          </div>
+
+          <!-- Agenda -->
+          <div class="editor-card">
+            <div class="editor-card-header">
+              <div class="editor-card-title"><span class="icon">📅</span> Agenda / Próximas fechas</div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span class="save-badge" id="badgeAgenda">✓ Guardado</span>
+                <button class="btn-add" onclick="abrirModalAgenda(null)">+ Nuevo evento</button>
+              </div>
+            </div>
+            <div class="editor-card-body">
+              <div id="agendaList"></div>
+            </div>
+          </div>
+
+          <!-- Accesos rápidos -->
+          <div class="editor-card">
+            <div class="editor-card-header">
+              <div class="editor-card-title"><span class="icon">⚡</span> Accesos rápidos del campus</div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span class="save-badge" id="badgeShortcuts">✓ Guardado</span>
+                <button class="btn-add" onclick="abrirModalShortcut(null)">+ Nuevo acceso</button>
+              </div>
+            </div>
+            <div class="editor-card-body">
+              <div class="shortcuts-editor-grid" id="shortcutsList"></div>
+            </div>
+          </div>
+
+        </div><!-- /tab-campus -->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Materia -->
+  <div class="editor-modal-overlay hidden" id="modalMateria">
+    <div class="editor-modal">
+      <div class="editor-modal-header">
+        <h4 id="modalMateriaTitle">Nueva materia</h4>
+        <button class="modal-close" onclick="cerrarModal('modalMateria')">✕</button>
+      </div>
+      <div class="editor-modal-body">
+        <div class="editor-field">
+          <label>Nombre de la materia</label>
+          <input type="text" id="mNombre" placeholder="Ej: Lengua y Literatura">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="editor-field">
+            <label>Código</label>
+            <input type="text" id="mCodigo" placeholder="LEN · 1er año">
+          </div>
+          <div class="editor-field">
+            <label>Docente</label>
+            <input type="text" id="mDocente" placeholder="Prof. García, M.">
+          </div>
+        </div>
+        <div class="editor-field">
+          <label>Progreso (%)</label>
+          <input type="number" id="mProgreso" min="0" max="100" placeholder="72">
+        </div>
+        <div class="editor-field">
+          <label>Color</label>
+          <div class="color-preview-row">
+            <input type="color" id="mColorPicker" value="#1a6a3e">
+            <input type="text" id="mColor" placeholder="#1a6a3e">
+          </div>
+        </div>
+      </div>
+      <div class="editor-modal-footer">
+        <button class="btn-modal-cancel" onclick="cerrarModal('modalMateria')">Cancelar</button>
+        <button class="btn-modal-save" onclick="guardarMateria()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Novedad -->
+  <div class="editor-modal-overlay hidden" id="modalNovedad">
+    <div class="editor-modal">
+      <div class="editor-modal-header">
+        <h4 id="modalNovedadTitle">Nueva novedad</h4>
+        <button class="modal-close" onclick="cerrarModal('modalNovedad')">✕</button>
+      </div>
+      <div class="editor-modal-body">
+        <div class="editor-field">
+          <label>Título</label>
+          <input type="text" id="nTitulo" placeholder="Ej: Nuevo material disponible">
+        </div>
+        <div class="editor-field">
+          <label>Descripción</label>
+          <input type="text" id="nDesc" placeholder="Ej: Lengua y Literatura · Unidad 4">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="editor-field">
+            <label>Fecha</label>
+            <input type="text" id="nFecha" placeholder="Hoy, Ayer, 14/4...">
+          </div>
+          <div class="editor-field">
+            <label>Color del punto</label>
+            <select id="nColor">
+              <option value="verde">🟢 Verde</option>
+              <option value="naranja">🟠 Naranja</option>
+              <option value="rojo">🔴 Rojo</option>
+              <option value="azul">🔵 Azul</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="editor-modal-footer">
+        <button class="btn-modal-cancel" onclick="cerrarModal('modalNovedad')">Cancelar</button>
+        <button class="btn-modal-save" onclick="guardarNovedad()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Agenda -->
+  <div class="editor-modal-overlay hidden" id="modalAgenda">
+    <div class="editor-modal">
+      <div class="editor-modal-header">
+        <h4 id="modalAgendaTitle">Nuevo evento</h4>
+        <button class="modal-close" onclick="cerrarModal('modalAgenda')">✕</button>
+      </div>
+      <div class="editor-modal-body">
+        <div class="editor-field">
+          <label>Título del evento</label>
+          <input type="text" id="aTitulo" placeholder="Ej: Entrega TP Historia">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+          <div class="editor-field">
+            <label>Día</label>
+            <input type="number" id="aDia" min="1" max="31" placeholder="18">
+          </div>
+          <div class="editor-field">
+            <label>Mes (abrev.)</label>
+            <input type="text" id="aMes" placeholder="Abr">
+          </div>
+          <div class="editor-field">
+            <label>Hora</label>
+            <input type="text" id="aHora" placeholder="23:59 hs">
+          </div>
+        </div>
+      </div>
+      <div class="editor-modal-footer">
+        <button class="btn-modal-cancel" onclick="cerrarModal('modalAgenda')">Cancelar</button>
+        <button class="btn-modal-save" onclick="guardarAgenda()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Shortcut -->
+  <div class="editor-modal-overlay hidden" id="modalShortcut">
+    <div class="editor-modal">
+      <div class="editor-modal-header">
+        <h4 id="modalShortcutTitle">Nuevo acceso rápido</h4>
+        <button class="modal-close" onclick="cerrarModal('modalShortcut')">✕</button>
+      </div>
+      <div class="editor-modal-body">
+        <div class="editor-field">
+          <label>Nombre</label>
+          <input type="text" id="sNombre" placeholder="Ej: Biblioteca">
+        </div>
+        <div class="editor-field">
+          <label>Ícono (emoji)</label>
+          <input type="text" id="sIcono" placeholder="📚">
+        </div>
+      </div>
+      <div class="editor-modal-footer">
+        <button class="btn-modal-cancel" onclick="cerrarModal('modalShortcut')">Cancelar</button>
+        <button class="btn-modal-save" onclick="guardarShortcut()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="panel.js"></script>
+</body>
+</html>

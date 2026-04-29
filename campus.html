@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Virtual — Sistema Institucional</title>
+  <link rel="stylesheet" href="campus.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="campus-header">
+    <div class="header-left">
+      <span class="header-logo">&#9632;</span>
+      <div class="header-titles">
+        <h1>Sistema Institucional</h1>
+        <h2>Campus Virtual</h2>
+      </div>
+    </div>
+    <div class="header-right">
+      <nav class="header-nav">
+        <button class="header-nav-btn" onclick="scrollToEventos()">&#128197; Eventos</button>
+        <button class="header-nav-btn" onclick="scrollToNovedades()">&#128276; Novedades</button>
+        <button class="header-nav-btn" id="btnCarreras" onclick="toggleCarreras()">&#128218; Materias</button>
+      </nav>
+      <span class="header-user">Bienvenido, <strong id="headerUser">—</strong></span>
+      <a href="panel.html" class="btn-panel">&#9881; Panel de Control</a>
+      <button class="btn-salir" id="btnSalir">&#10005; Salir</button>
+    </div>
+  </header>
+
+  <!-- Fondo oscuro del panel de materias -->
+  <div class="carreras-backdrop" id="carrerasBackdrop" onclick="toggleCarreras()"></div>
+
+  <!-- ══════════════════════════════════════════
+       PANEL DE MATERIAS
+  ══════════════════════════════════════════ -->
+  <div class="carreras-panel" id="carrerasPanel" aria-hidden="true">
+    <div class="carreras-inner materias-inner">
+      <div class="carreras-header">
+        <div class="carreras-header-left">
+          <span class="carreras-icon">&#128218;</span>
+          <div>
+            <h2 class="carreras-titulo">Plan de Estudios</h2>
+            <p class="carreras-subtitulo">Tecnicatura Superior en Ciencia de Datos e Inteligencia Artificial</p>
+          </div>
+        </div>
+        <button class="carreras-close" onclick="toggleCarreras()" aria-label="Cerrar">&#10005;</button>
+      </div>
+
+      <!-- Tabs de año -->
+      <div class="anio-tabs">
+        <button class="anio-tab active" data-anio="1" onclick="switchAnio(1)">&#128197; 1er Año</button>
+        <button class="anio-tab" data-anio="2" onclick="switchAnio(2)">&#128197; 2do Año</button>
+        <button class="anio-tab" data-anio="3" onclick="switchAnio(3)">&#128197; 3er Año</button>
+        <button class="anio-tab anio-tab-corr" data-anio="corr" onclick="switchAnio('corr')">&#128279; Correlatividades</button>
+      </div>
+
+      <!-- 1er Año -->
+      <div class="anio-contenido active" id="anio-1">
+        <div class="cuatrimestres-row">
+          <div class="cuatrimestre-bloque">
+            <div class="cuatri-label">&#128337; 1er Cuatrimestre</div>
+            <ul class="materias-lista">
+              <li class="materia-item" onclick="seleccionarMateria(this)">Lógica Computacional</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Elementos de Análisis Matemáticos</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Inglés para Cs de Datos e IA I</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Técnicas de Programación</li>
+            </ul>
+          </div>
+          <div class="cuatrimestre-bloque">
+            <div class="cuatri-label">&#128337; 2do Cuatrimestre</div>
+            <ul class="materias-lista">
+              <li class="materia-item" onclick="seleccionarMateria(this)">Administración y Gestión de Base de Datos</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Estadística y Probabilidades para Gestión de Datos</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Inglés para Cs de Datos e IA II</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Aproximación al Campo Laboral</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2do Año -->
+      <div class="anio-contenido" id="anio-2">
+        <div class="cuatrimestres-row">
+          <div class="cuatrimestre-bloque">
+            <div class="cuatri-label">&#128337; 1er Cuatrimestre</div>
+            <ul class="materias-lista">
+              <li class="materia-item" onclick="seleccionarMateria(this)">Desarrollo de Sistemas de IA</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Técnicas de Procesamiento del Habla</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Cs de Datos</li>
+            </ul>
+          </div>
+          <div class="cuatrimestre-bloque">
+            <div class="cuatri-label">&#128337; 2do Cuatrimestre</div>
+            <ul class="materias-lista">
+              <li class="materia-item" onclick="seleccionarMateria(this)">Modelizado de Minería de Datos</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Procesamiento de Aprendizaje Automático</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Análisis y Exploración de Datos</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3er Año -->
+      <div class="anio-contenido" id="anio-3">
+        <div class="cuatrimestres-row">
+          <div class="cuatrimestre-bloque">
+            <div class="cuatri-label">&#128337; 1er Cuatrimestre</div>
+            <ul class="materias-lista">
+              <li class="materia-item" onclick="seleccionarMateria(this)">Gestión de Proyectos</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Seminario de Actualización</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Modelizado de Sistemas de IA</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Tecnología y Ambiente</li>
+            </ul>
+          </div>
+          <div class="cuatrimestre-bloque">
+            <div class="cuatri-label">&#128337; 2do Cuatrimestre</div>
+            <ul class="materias-lista">
+              <li class="materia-item" onclick="seleccionarMateria(this)">Taller de Comunicación</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Técnicas de Procesamiento Digital de Imágenes</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Proyecto Integrador</li>
+              <li class="materia-item" onclick="seleccionarMateria(this)">Trabajo Tecnología y Sociedad</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Correlatividades -->
+      <div class="anio-contenido" id="anio-corr">
+        <div class="corr-intro">
+          <span class="corr-intro-icon">&#8505;</span>
+          <p>Las correlatividades hacen referencia a los conocimientos mínimos necesarios para abordar los contenidos de los espacios curriculares a partir del 2do cuatrimestre de la carrera, teniendo en cuenta las articulaciones y la especificidad de cada espacio.</p>
+        </div>
+
+        <div class="corr-tabla-wrap">
+          <div class="corr-tabla-header">
+            <div class="corr-col-materia">Para cursar</div>
+            <div class="corr-col-req">Deberá tener aprobado</div>
+          </div>
+
+          <div class="corr-fila">
+            <div class="corr-col-materia">
+              <span class="corr-badge">Desarrollo de Sistemas de Inteligencia Artificial</span>
+            </div>
+            <div class="corr-col-req">
+              <span class="corr-req-item">Administración y Gestión de Bases de Datos</span>
+              <span class="corr-req-item">Lógica Computacional</span>
+            </div>
+          </div>
+
+          <div class="corr-fila">
+            <div class="corr-col-materia">
+              <span class="corr-badge">Ciencia de Datos</span>
+            </div>
+            <div class="corr-col-req">
+              <span class="corr-req-item">Administración y Gestión de Bases de Datos</span>
+              <span class="corr-req-item">Estadística y Probabilidades para la Gestión de Datos</span>
+            </div>
+          </div>
+
+          <div class="corr-fila">
+            <div class="corr-col-materia">
+              <span class="corr-badge corr-badge-pp">PP: Análisis y Exploración de Datos</span>
+            </div>
+            <div class="corr-col-req">
+              <span class="corr-req-item">Ciencia de Datos</span>
+            </div>
+          </div>
+
+          <div class="corr-fila">
+            <div class="corr-col-materia">
+              <span class="corr-badge corr-badge-pp">PP: Modelizado de Sistemas de IA</span>
+            </div>
+            <div class="corr-col-req">
+              <span class="corr-req-item">Desarrollo de Sistemas de Inteligencia Artificial</span>
+            </div>
+          </div>
+
+          <div class="corr-fila">
+            <div class="corr-col-materia">
+              <span class="corr-badge corr-badge-pp">PP: Proyecto Integrador</span>
+            </div>
+            <div class="corr-col-req">
+              <span class="corr-req-item">PP: Análisis y Exploración de Datos</span>
+              <span class="corr-req-item">PP: Modelizado de Sistemas de IA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="campus-hero">
+    <div class="hero-content">
+      <span class="hero-tag">&#127979; Campus Virtual · Ciclo 2025</span>
+      <h2>Tu espacio de aprendizaje institucional</h2>
+      <p>Accedé a tus materias, actividades y novedades desde un solo lugar. Tu progreso académico actualizado.</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="num">6</div>
+          <div class="lbl">Materias activas</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num">3</div>
+          <div class="lbl">Entregas pendientes</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num">2</div>
+          <div class="lbl">Novedades nuevas</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cuerpo -->
+  <main class="campus-body">
+
+    <!-- Mis materias -->
+    <div>
+      <div class="section-header">
+        <h3>Mis materias</h3>
+        <a href="#" class="section-link" onclick="toast('Módulo completo próximamente'); return false;">Ver todas →</a>
+      </div>
+      <div class="materias-grid"></div>
+    </div>
+
+    <!-- Dos columnas: Novedades + Agenda -->
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:28px; flex-wrap:wrap;">
+      <div id="seccion-novedades">
+        <div class="section-header"><h3>Novedades</h3></div>
+        <div class="novedades-list"></div>
+      </div>
+      <div>
+        <div class="section-header"><h3>Próximas fechas</h3></div>
+        <div class="agenda-grid"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════
+       CALENDARIO DE FECHAS IMPORTANTES
+  ══════════════════════════════════════════ -->
+  <section class="calendario-section">
+
+    <div class="calendario-section-header">
+      <div class="cal-header-left">
+        <span class="cal-icon">&#128197;</span>
+        <div>
+          <h2>Calendario de Fechas Importantes</h2>
+          <p>Ciclo lectivo 2025 · Actualizado por el equipo docente</p>
+        </div>
+      </div>
+      <div class="cal-header-right">
+        <button class="btn-cal-edit" id="btnEditarCalendario" onclick="toggleModoEdicion()">
+          &#9998; Editar calendario
+        </button>
+      </div>
+    </div>
+
+    <!-- Navegación del calendario -->
+    <div class="calendario-nav">
+      <button class="cal-nav-btn" id="btnMesAnterior" onclick="cambiarMes(-1)">&#8249;</button>
+      <div class="cal-nav-center">
+        <span class="cal-mes-actual" id="calMesLabel">Abril 2025</span>
+      </div>
+      <button class="cal-nav-btn" id="btnMesSiguiente" onclick="cambiarMes(1)">&#8250;</button>
+    </div>
+
+    <!-- Grid del calendario -->
+    <div class="calendario-wrapper">
+      <!-- Nombre del mes + año (estilo impreso) -->
+      <div class="cal-mes-header">
+        <span class="cal-mes-nombre" id="calMesNombre">abril</span>
+        <span class="cal-mes-anio"   id="calMesAnio">2025</span>
+      </div>
+      <!-- Tabla con borde exterior -->
+      <div class="cal-tabla-wrap">
+        <!-- Días de la semana -->
+        <div class="cal-dias-semana">
+          <div>Dom</div><div>Lun</div><div>Mar</div>
+          <div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
+        </div>
+        <!-- Celdas del mes -->
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+    </div>
+    <!-- Leyenda y lista de eventos del mes -->
+    <div class="calendario-footer">
+
+      <div class="cal-leyenda">
+        <span class="leyenda-item"><span class="leyenda-dot cat-examen"></span>Examen / Parcial</span>
+        <span class="leyenda-item"><span class="leyenda-dot cat-entrega"></span>Entrega / TP</span>
+        <span class="leyenda-item"><span class="leyenda-dot cat-evento"></span>Evento institucional</span>
+        <span class="leyenda-item"><span class="leyenda-dot cat-feriado"></span>Feriado / Asueto</span>
+        <span class="leyenda-item"><span class="leyenda-dot cat-otro"></span>Otro</span>
+      </div>
+
+      <div class="cal-eventos-mes">
+        <h4 class="cal-eventos-titulo" id="calEventosTitulo">Eventos de Abril</h4>
+        <div class="cal-eventos-lista" id="calEventosLista"></div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- Modal: Agregar / Editar evento del calendario -->
+  <div class="cal-modal-overlay hidden" id="calModal">
+    <div class="cal-modal" onclick="event.stopPropagation()">
+      <div class="cal-modal-header">
+        <h4 id="calModalTitle">Nuevo evento</h4>
+        <button class="cal-modal-close" onclick="cerrarCalModal(); event.stopPropagation();">&#10005;</button>
+      </div>
+      <div class="cal-modal-body">
+        <div class="cal-field">
+          <label>Título del evento</label>
+          <input type="text" id="calEvTitulo" placeholder="Ej: Parcial de Matemática">
+        </div>
+        <div class="cal-field">
+          <label>Descripción (opcional)</label>
+          <input type="text" id="calEvDesc" placeholder="Ej: Unidades 1 a 3 · Aula 12">
+        </div>
+        <div class="cal-field-row">
+          <div class="cal-field">
+            <label>Fecha</label>
+            <input type="date" id="calEvFecha">
+          </div>
+          <div class="cal-field">
+            <label>Hora (opcional)</label>
+            <input type="time" id="calEvHora" placeholder="08:00">
+          </div>
+        </div>
+        <div class="cal-field">
+          <label>Categoría</label>
+          <div class="cal-cat-selector" id="calCatSelector">
+            <button type="button" class="cal-cat-btn active" data-cat="examen">&#128221; Examen</button>
+            <button type="button" class="cal-cat-btn" data-cat="entrega">&#128203; Entrega</button>
+            <button type="button" class="cal-cat-btn" data-cat="evento">&#127979; Evento</button>
+            <button type="button" class="cal-cat-btn" data-cat="feriado">&#127937; Feriado</button>
+            <button type="button" class="cal-cat-btn" data-cat="otro">&#128309; Otro</button>
+          </div>
+        </div>
+      </div>
+      <div class="cal-modal-footer">
+        <button class="cal-btn-cancel" onclick="cerrarCalModal()">Cancelar</button>
+        <button class="cal-btn-save"   onclick="guardarEvento()">Guardar evento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toastEl"></div>
+
+  <script src="campus.js"></script>
+</body>
+</html>
